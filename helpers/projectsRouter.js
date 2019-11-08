@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validateProjectId, (req, res) => {
   const { id } = req.params;
   const project = Projects.getProjectById(id);
   const tasks = Tasks.getTaskByProjectId(id);
@@ -57,18 +57,36 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", validateProjectId, async (req, res) => {
   const { id } = req.params;
   try {
     const project = await Projects.remove(id);
     res.status(200).json({ message: `Project ${id} has been deleted` });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: `There wa a problem deleting project ${id}: ${error.message}`
-      });
+    res.status(500).json({
+      message: `There wa a problem deleting project ${id}: ${error.message}`
+    });
   }
 });
+
+// MIDDLEWARE
+
+function validateProjectId(req, res, next) {
+  const { id } = req.params;
+  Projects.getProjectById(id)
+    .then(data => {
+      if (data) {
+        req.data = data;
+        next();
+      } else {
+        res.status(404).json({ message: `Project ${id} could not be found` });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: `There was a problem retrieving project ${id}: ${error.message}`
+      });
+    });
+}
 
 module.exports = router;
