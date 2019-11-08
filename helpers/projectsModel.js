@@ -3,7 +3,8 @@ const db = require("../data/db-config");
 module.exports = {
   getProjects,
   getProjectById,
-  insertProject
+  insertProject,
+  remove
 };
 
 function getProjects() {
@@ -22,4 +23,8 @@ function insertProject(project) {
     .then(id => {
       return getProjectById(id[0]);
     });
+}
+
+function remove(id) {
+    return db('projects').where({id}).del();
 }

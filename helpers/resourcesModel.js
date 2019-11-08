@@ -3,7 +3,8 @@ const db = require("../data/db-config");
 module.exports = {
   getResources,
   getResourceById,
-  insertResource
+  insertResource,
+  getResourceByProjectId
 };
 
 function getResources() {
@@ -14,6 +15,15 @@ function getResourceById(id) {
   return db("resources")
     .where({ id })
     .first();
+}
+
+function getResourceByProjectId(projectid) {
+  return db
+    .select("r.id", "r.resource_name", "r.resource_description")
+    .from("resources as r")
+    .join("projectsResources as rp", "r.id", "rp.resource_id")
+    .join("projects as p", "p.id", "rp.project_id")
+    .where("p.id", projectid);
 }
 
 function insertResource(resource) {

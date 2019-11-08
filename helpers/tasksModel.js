@@ -3,7 +3,8 @@ const db = require("../data/db-config");
 module.exports = {
   getTasks,
   getTaskById,
-  insertTask
+  insertTask,
+  getTaskByProjectId
 };
 
 function getTasks() {
@@ -23,6 +24,10 @@ function getTaskById(id) {
   return db("tasks")
     .where({ id })
     .first();
+}
+
+function getTaskByProjectId(projectid) {
+  return db("tasks").where("project_id", projectid);
 }
 
 function insertTask(task) {
