@@ -7,7 +7,16 @@ module.exports = {
 };
 
 function getTasks() {
-  return db("tasks");
+  return db
+    .select(
+      "t.id",
+      "t.task_description",
+      "t.task_notes",
+      "t.is_completed",
+      "p.project_name"
+    )
+    .from("tasks as t")
+    .join("projects as p", "t.project_id", "p.id");
 }
 
 function getTaskById(id) {
